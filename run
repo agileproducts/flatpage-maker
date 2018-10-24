@@ -1,1 +1,1 @@
-npm run-script build
+node generate.js

@@ -4,6 +4,13 @@
     <title>Minimal HTML Page</title>
   </head>
   <body>
-    My favourite book is {{title}} by {{author}}
+    <h1>My Library</h1>
+    {{#library}}
+        <ul>
+    	{{#book}}
+    	  <li>{{title}} by {{author}}</li>
+    	{{/book}}
+    	</ul>
+    {{/library}}
   </body>
 </html>

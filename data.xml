@@ -1,0 +1,14 @@
+<library>
+	<book>
+		<title>Emma</title>
+		<author>Jane Austen</author>
+	</book>
+	<book>
+		<title>Vanity Fair</title>
+		<author>William Makepeace Thackeray</author>
+	</book>
+	<book>
+		<title>Tess of the D'Urbervilles</title>
+		<author>Thomas Hardy</author>
+	</book>
+</library>
