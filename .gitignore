@@ -1,4 +1,6 @@
 node_modules
+_private_data
+_output
 *.tmp
 .DS_Store
 index.html

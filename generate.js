@@ -1,29 +1,61 @@
 var fs = require('fs');
-var yaml = require('js-yaml');
-var mustache = require('mustache');
+var path = require('path');
+
+//var mustache = require('mustache');
+var handlebars = require('handlebars');
 var xml2js = require('xml2js');
+var csvParse = require('csv-parse/sync');
 
-var config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
 
-function writeHTML(template, data) {
-	var output = mustache.render(template, data);
-	fs.writeFileSync(config.output, output, 'utf8');		
+function convertXML(inputfile, template) {
+	var xmlfile = fs.readFileSync(path.join(__dirname, inputfile), 'utf8');
+    var xmlParser = new xml2js.Parser();
+	xmlParser.parseString(xmlfile, function (err, result) {
+		if (err) {
+			console.log(err);
+		} else {
+			writeHTML(template, result);
+		}
+	});
 }
 
-var template = fs.readFileSync(config.template, 'utf8');
+function parseCSV(csvData) {
+	let data = csvParse.parse(csvData, {
+		columns: true
+	});
+	return data;
+}
 
-var xmlfile = fs.readFileSync('data.xml', 'utf8');
-var xmlParser = new xml2js.Parser();
+function parseXML(xmlData) {
+	let xmlParser = new xml2js.Parser();
+	xmlParser.parseString(xmlData, function (err, result) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log(result); 
+		}
+	});
+}
 
-xmlParser.parseString(xmlfile, function (err, result) {
-	if (err) {
-		console.log(err);
-	} else {
-		writeHTML(template, result);
-	}
-});
+function generateHTML(template, data) {
+	let view = handlebars.compile(template);
+	let output = view(data);
+	return output;		
+}
 
-/*xmldata.parseXmlfile(xmlfile, writeHTML);*/
+function makeHTML(inputFile, outputFile, templateFile, parser) {	
+	let source = fs.readFileSync(path.join(__dirname, inputFile), 'utf8');
+	let template = fs.readFileSync(templateFile, 'utf8');
+	let data = parser(source);
+	let html = generateHTML(template, data)
+	fs.writeFileSync(outputFile, html, 'utf8');
+}
+
+var inputFile = process.argv[2];
+makeHTML(inputFile, '_output/output.html', 'templates/submissions.hbs', parseCSV)
+makeHTML('data.xml', '_output/xml.html', 'templates/template.mst', parseXML) //doesn't work because not synchronous. 
+
+
 
 
 
